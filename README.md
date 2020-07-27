@@ -9,4 +9,4 @@
  
 社区发现算法
 1. PageRank
-2. [LPA](./LPA.ipyb)
+2. [LPA](./LPA.ipynb)
