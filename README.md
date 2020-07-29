@@ -10,3 +10,4 @@
 社区发现算法
 1. PageRank
 2. [LPA](./LPA.ipynb)
+3. [Louvain](./louvain.ipynb)
