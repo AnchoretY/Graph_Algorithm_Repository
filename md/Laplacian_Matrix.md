@@ -10,8 +10,7 @@
 
 ### 2.度矩阵
 &emsp;&emsp;节点的度为节点与其他节点连接的权重之和。  
-  $$d_i = \displaystyle\sum^{N}_{j=1}{w_{ij}}$$ 
-  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.svdtf2ncq8f.png" alt="image" width=200 /></div>
+  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.svdtf2ncq8f.png" alt="image" width=100 /></div>
 
 
 
