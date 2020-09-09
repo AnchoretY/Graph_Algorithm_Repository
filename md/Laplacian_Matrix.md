@@ -10,7 +10,7 @@
 
 ### 2.度矩阵
 &emsp;&emsp;节点的度为节点与其他节点连接的权重之和。  
-  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.e0m6pwriuph.png" alt="image" width=100 /></div>  
+  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.e0m6pwriuph.png" alt="image" width=300 /></div>  
 
 > 把邻接矩阵A的每一列元素加起来得到N个数，然后把它们放在对角线上（其它地方都是零），组成一个N×N的对角矩阵，则为度矩阵
 
@@ -20,9 +20,8 @@
 &emsp;&emsp;拉普拉斯矩阵的定义为
 $$ L = D - A $$
 &emsp;&emsp;上面图的拉普拉斯矩阵为：  
-<div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.9yf0itttcdg.png" alt="image" width=100 /></div> 
-
-  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.9yf0itttcdg.png" alt="image" width=100 /></div>  
+<div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.9yf0itttcdg.png" alt="image" width=300 /></div> 
+ 
 
 
 ### 4.正则拉普拉斯矩阵
