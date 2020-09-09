@@ -11,3 +11,6 @@
 1. PageRank
 2. [LPA](./LPA.ipynb)
 3. [Louvain](./louvain.ipynb)
+
+## torch_geometric
+  &emsp;&emsp;pytorch对应地图深度学习库，内置了许多图数据形式的数据集和成熟的模型来供用户调用。
