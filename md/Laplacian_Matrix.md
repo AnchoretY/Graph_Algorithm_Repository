@@ -10,9 +10,8 @@
 
 ### 2.度矩阵
 &emsp;&emsp;节点的度为节点与其他节点连接的权重之和。  
-  $$d_i = \displaystyle\sum^{N}_{j=1}{w_{ij}}$$  
-&emsp;&emsp;度矩阵为各个节点的度值所组成的矩阵，**常用D表示**，上面图的度矩阵为：  
-<div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.97stlbj6y3a.png" alt="image"  width=500 /></div>
+  $$d_i = \displaystyle\sum^{N}_{j=1}{w_{ij}}$$ 
+  <div align=center><img src="https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.svdtf2ncq8f.png" alt="image" width=500 /></div>
 
 
 
