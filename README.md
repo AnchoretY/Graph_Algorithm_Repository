@@ -7,6 +7,12 @@
 
 
 
+## 基础知识
+1. 拉普拉斯矩阵
+2. 谱聚类
+
+
+
 ## 工具包
 
 ### 1.NetworkX
@@ -37,3 +43,9 @@
 
 
 ### 图数据库
+=======
+2. [LPA](./LPA.ipynb)
+3. [Louvain](./louvain.ipynb)
+
+### torch_geometric
+  &emsp;&emsp;pytorch对应地图深度学习库，内置了许多图数据形式的数据集和成熟的模型来供用户调用。
