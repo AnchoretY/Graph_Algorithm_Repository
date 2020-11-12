@@ -43,7 +43,7 @@
 
 
 ### 图数据库
-=======
+
 2. [LPA](./LPA.ipynb)
 3. [Louvain](./louvain.ipynb)
 

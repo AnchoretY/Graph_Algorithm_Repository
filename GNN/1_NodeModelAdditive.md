@@ -1,17 +1,20 @@
-# NodeModelAdditive
+#  NodeModelAdditive
 
-&emsp;&emsp;采用标准的加法运算进行邻域节点消息传递的GCN层结构。
+&emsp;&emsp;采用标准的加法运算进行邻域节点消息传递的图神经网络层结构。即采用公式：
 
-
+​									$$x = x_n +x_e$$
 
 主要的流程为：
 
 - 将节点进行编码表示$X_e = WX_e$
 - 将边进行编码表示$X_n = WX_n$
+- 计算聚合标准化系数
 
-- 聚合邻域节点和边的信息
+- 使用加法进行邻域边和节点的信息传递
 
+  
 
+下面将对NodeModelAdditive模型的构建方式进行详细的描述：
 
 1. #### 对节点进行编码表示
 
@@ -74,11 +77,7 @@
        	def forward(x):
           ...
           # 直接使用起始节点特征形成(E, C_out)的起始节点向量矩阵
-      		x_j = torch.index_select(x, 0, edge_index[0])
-          # 获得最终要进行聚合的特征向量，是否包含边特征两种
-          x_j = x_j + x_je if edge_attr is not None else x_j
-          # 整合特征信息到节点中,这里需要重点理解 得到(N, C_out)
-          x = scatter(x_j, edge_index[1], dim_size=x.size(0),reduce=self.aggr)
+      	r)
           ...
       ~~~
 
@@ -249,159 +248,5 @@ class NodeModelAdditive(NodeModelBase):
 
         return x
       
-      
-class NodeModelBase(nn.Module):
-    """
-    基于节点和边权重更新节点权重的模型的基础模型。
-    注意:非线性聚合方式采用add的方式
-
-    Args:
-        in_channels (int): 输入通道数
-        out_channels (int): 输出通道数
-        in_edgedim (int, optional): 输入的边特征维度
-        deg_norm (str, optional): 节点正则化常亮计算方法
-            Choose from [None, 'sm', 'rw'].
-        edge_gate (str, optional): method of applying edge gating mechanism. Choose from [None, 'proj', 'free'].
-            Note: 当设置free时，应该提分that when set to 'free', should also provide `num_edges` as an argument (but then it can only work
-            with fixed edge graph).
-        aggr (str, optional): 信息传递方法. ['add', 'mean', 'max']，默认为'add'.
-        **kwargs: could include `num_edges`, etc.
-
-    Input:
-        - x (torch.Tensor): 节点特征矩阵 (N, C_in)
-        - edge_index (torch.LongTensor): COO 格式的边索引，(2, E)
-        - edge_attr (torch.Tensor, optional): 边特征矩阵 (E, D_in)
-
-    Output:
-        - xo (torch.Tensor):更新的节点特征 (N, C_out)
-
-    where
-        N: 输入节点数量
-        E: 边数量
-        C_in/C_out: 输入/输出节点特征的维度
-        D_in: 输入的边特征维度
-    """
-
-    def __init__(self, in_channels, out_channels, in_edgedim=None, deg_norm='none', edge_gate='none', aggr='add',
-                 *args, **kwargs):
-        assert deg_norm in ['none', 'sm', 'rw']
-        assert edge_gate in ['none', 'proj', 'free']
-        assert aggr in ['add', 'mean', 'max']
-
-        super(NodeModelBase, self).__init__()
-
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.in_edgedim = in_edgedim
-        self.deg_norm = deg_norm
-        self.aggr = aggr
-
-        if edge_gate == 'proj':
-            self.edge_gate = EdgeGateProj(out_channels, in_edgedim=in_edgedim, bias=True)
-        elif edge_gate == 'free':
-            assert 'num_edges' in kwargs  # note: this will restrict the model to only a fixed number of edges
-            self.edge_gate = EdgeGateFree(kwargs['num_edges'])  # so don't use this unless necessary
-        else:
-            self.register_parameter('edge_gate', None)
-
-    @staticmethod
-    def degnorm_const(edge_index=None, num_nodes=None, deg=None, edge_weight=None, method='sm', device=None):
-        """
-        计算归一化常数
-        Calculating the normalization constants based on out-degrees for a graph.
-        `_sm` 使用对称归一化，"symmetric". 更适合用于无向图.
-        `_rw` 使用随即游走归一化(均值),"random walk". 更适合用于有向图.
-
-        Procedure:
-            - 检查edge_weight，如果不为None，那么必须同时提供edge_index和num_nodes，计算全部节点的度
-            - 如果edge_weighe，如果是None，检查是否已经存在deg(节点的度矩阵):
-            	- 如果度矩阵存在，那么忽略edge_index和num_nodes
-            	- 如果度矩阵不存在，则必须提供edge_index和num_nodes，并计算全部节点的度
-            	
-        Input:
-            - edge_index (torch.Tensor): COO格式的图关系, (2, E)，long
-            - num_nodes (int): 节点数量
-            - deg (torch.Tensor): 节点的度,(N,),float
-            - edge_weight (torch.Tensor): 边权重,(E,),float
-            - method (str): 度标准化方法, choose from ['sm', 'rw']
-            - device (str or torch.device): 驱动器编号
-
-        Output:
-            - norm (torch.Tensor): 基于节点度和边权重的标准化常数.
-                If `method` == 'sm', size (E,);
-                if `method` == 'rw' and `edge_weight` != None, size (E,);
-                if `method` == 'rw' and `edge_weight` == None, size (N,).
-
-        where
-            N: 节点数量
-            E: 边数量
-        """
-        assert method in ['sm', 'rw']
-
-        if device is None and edge_index is not None:
-            device = edge_index.device
-
-        if edge_weight is not None:
-            assert edge_index is not None, 'edge_index must be provided when edge_weight is not None'
-            assert num_nodes is not None, 'num_nodes must be provided when edge_weight is not None'
-
-            edge_weight = edge_weight.view(-1)
-            assert edge_weight.size(0) == edge_index.size(1)
-						
-            calculate_deg = True    # 时候需要计算节点度
-            edge_weight_equal = False
-        else:
-            if deg is None:
-                assert edge_index is not None, 'edge_index must be provided when edge_weight is None ' \
-                                               'but deg not provided'
-                assert num_nodes is not None, 'num_nodes must be provided when edge_weight is None ' \
-                                              'but deg not provided'
-                edge_weight = torch.ones((edge_index.size(1),), device=device)
-                calculate_deg = True
-            else:
-                # node degrees are provided
-                calculate_deg = False
-            edge_weight_equal = True
-
-        row, col = edge_index
-        # 计算节点度
-        if calculate_deg:
-            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-				# 节点度标准化
-        if method == 'sm':
-            deg_inv_sqrt = deg.pow(-0.5)
-        elif method == 'rw':
-            deg_inv_sqrt = deg.pow(-1)
-        else:
-            raise ValueError
-
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-				
-        if method == 'sm':
-          	# 采用对称标准化的方式，得到的结果向量为(E,)
-            norm = (deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col] if not edge_weight_equal # 注意，这里没有直接使用deg_inv_sqrt是因为要乘以权重
-                    else deg_inv_sqrt[row] * deg_inv_sqrt[col])  # size (E,)
-        elif method == 'rw':
-          # 采用随即游走标准化，如果没有边权重矩阵，那么直接输出签名开方的结果，为（N,），否则与上面类似输出为(E,)
-            norm = (deg_inv_sqrt[row] * edge_weight if not edge_weight_equal  # size (E,)
-                    else deg_inv_sqrt)  # size (N,)
-        else:
-            raise ValueError
-
-        return norm
-
-    def forward(self, x, edge_index, edge_attr=None, deg=None, edge_weight=None, *args, **kwargs):
-        return x
-
-    def num_parameters(self):
-        if not hasattr(self, 'num_para'):
-            self.num_para = sum([p.nelement() for p in self.parameters()])
-        return self.num_para
-
-    def __repr__(self):
-        return '{} (in_channels: {}, out_channels: {}, in_edgedim: {}, deg_norm: {}, edge_gate: {},' \
-               'aggr: {} | number of parameters: {})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels, self.in_edgedim,
-            self.deg_norm, self.edge_gate.__class__.__name__, self.aggr, self.num_parameters())
 ~~~
 
