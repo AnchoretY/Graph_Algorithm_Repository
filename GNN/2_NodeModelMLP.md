@@ -21,7 +21,8 @@
 class NodeModelAdditive(NodeModelBase):
 	def __init__(in_channels,out_channels):
 		...
-    
+    pass
+  
  	def forward(x):
     ...
     # ------------节点进行编码映射，这在NodeModelMLP中没有---------
@@ -50,8 +51,7 @@ class NodeModelAdditive(NodeModelBase):
 		...
     self.mlp = nn.Linear(in_features, out_channels, bias=bias)
     ...
-    
- 	def forward(x):
+    def forward(x):
   	# -------------------- 计算聚合系数 ------------------------
     ...
     # ------------ 使用MLP进行边和节点信息传递，不同点 ------------
