@@ -1,5 +1,3 @@
-
-
 # NodeModelMLP
 
 &emsp;&emsp;&emsp;NodeModeMLP与NodeMedelMLP非常类似，只是在邻域节点和边的信息完成聚合后，不再采用节点和边的信息直接加和的方式来进行节点信息的更新，而是将节点聚合信息与边聚合信息再通过一个MLP网络来进行映射后，在更新目标节点的信息。
@@ -29,18 +27,18 @@ class NodeModelAdditive(NodeModelBase):
     x = torch.matmul(x, self.weight_node)
     if in_edgedim is not None:
       self.weight_edge = Parameter(torch.Tensor(in_edgedim, out_channels))
-      
-    # -------------------- 计算聚合系数 ------------------------
-    ...
-    
-    # ------------ 使用加法进行边和节点信息传递，不同点 ------------
-    # 获得最终要进行聚合的特征向量，是否包含边特征两种
-    x_j = x_j + x_je if edge_attr is not None else x_j	
-    
-    #--------------------- 聚合节点信息 -------------------------
-    # 整合特征信息到节点中,这里需要重点理解 得到(N, C_out)
-    x = scatterx_j, edge_index[1], dim_size=x.size(0),reduce=self.aggr)
-    ....
+
+      # -------------------- 计算聚合系数 ------------------------
+      ...
+
+      # ------------ 使用加法进行边和节点信息传递，不同点 ------------
+      # 获得最终要进行聚合的特征向量，是否包含边特征两种
+      x_j = x_j + x_je if edge_attr is not None else x_j	
+
+      #--------------------- 聚合节点信息 -------------------------
+      # 整合特征信息到节点中,这里需要重点理解 得到(N, C_out)
+      x = scatterx_j, edge_index[1], dim_size=x.size(0),reduce=self.aggr)
+      ....
 ~~~
 
 而在NodeModelMLP中，只需要将其改为：
@@ -66,7 +64,7 @@ class NodeModelAdditive(NodeModelBase):
     ....
 ~~~
 
-
+> 仔细观察的朋友可能已将发现，如果NodeMedel
 
 ### 完成的NodeModeMLP代码
 

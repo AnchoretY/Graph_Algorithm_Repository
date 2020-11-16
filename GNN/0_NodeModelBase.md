@@ -4,8 +4,6 @@
 
 
 
-
-
 1. ### degnorm_const
 
 

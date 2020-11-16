@@ -67,13 +67,48 @@ tensor([[ 5.,  8.,  0.,  0.],
   
 ~~~
 
+#### torch.index_select函数
+
+##### 函数形式：
+
+~~~python
+index_select(
+	dim,
+  index
+)
+~~~
+
+> ### 参数：
+>
+> 	1. dim: 表示从第几维挑选数据
+>  	2. idnex: 要选取数据的索引值
+
+##### 功能：从张量某个维度选取向量
+
+##### 在图神经网络中的应用：在图神经网络中，一般用于节点信息聚合前选择出全部节点的向量值。
+
+##### 实例：
+
+~~~python
+# 将每个节点的标准化后的向量表示到 (E, C_out)
+x_j = torch.index_select(x_j, 0, edge_index[0])   #edge_index[0]表示边的源节点
+# 整合特征信息到节点中,这里需要重点理解 得到(N, C_out)
+x = scatter(x_j, edge_index[1], dim_size=x.size(0),'add')
+~~~
+
+&emsp;&emsp;下面为使用这两个函数进行信息更新的过程：
+
+![image](https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.ycqbc3xw8zo.png)
+
+
+
 1. GNN（Graph Neutual Network）
 
 2. Edge gete
 
 3. GATs（Graph Attention Networks）
 
-   
+    
 
 
 
