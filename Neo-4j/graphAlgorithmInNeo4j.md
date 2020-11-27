@@ -17,6 +17,31 @@
 > 在LPA中可以手动为一些节点设置初始时的标签，因此可以是能够进行**半监督学习**的。
 
 #### Cyper调用
+&emsp;&emsp;命名图模式下调用LPA的函数形式
+~~~mysql
+CALL gds.labelPropagation.stream(
+  graphName: String,
+  configuration: Map
+)
+YIELD
+    nodeId: Integer,
+    communityId: Integer
+~~~
+算法特有参数：
+  - maxIterations： 运行的最大迭代次数，默认为10
+  - nodeWeightProperty：节点权重
+  - relationshipWeightProperty：包含关系权重的属性名称
+  - seedProperty：初始社区标签的属性名称
+算法普遍具有的参数：
+  - concurrency：算法线程数
+
+
+
+
+
+
+
+
 1. 创建子图
 ~~~mysql
 # 创建子图
