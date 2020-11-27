@@ -38,7 +38,7 @@ YIELD nodeId, communityId AS Community
 RETURN gds.util.asNode(nodeId).name AS Name, Community
 ORDER BY Community, Name
 ~~~
-除了上面这种只使用基本的形式进行社区聚类，还可以通过制定部分节点的初始标签进行半监督学习，以及指定边的权重进行社区发现。
+&emsp;&emsp;除了上面这种只使用基本的形式进行社区聚类，还可以通过制定部分节点的初始标签进行半监督学习，以及指定边的权重进行社区发现。
 ~~~mysql
 # 半监督学习
 CALL gds.labelPropagation.stream('myGraph', { seedProperty: 'seed_label' })
