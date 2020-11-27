@@ -1,3 +1,8 @@
+
+常见社区检测算法总结
+![](https://raw.githubusercontent.com/AnchoretY/images/master/blog/image.mysknyn8zdk.png)
+
+
 ### 1.标签传播算法
 特点：
   1. **单单使用网络结构进行社区的发现**，不需要预定义一些目标函数和先验知识
