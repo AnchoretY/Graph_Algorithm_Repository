@@ -6,7 +6,7 @@
 ### 1.标签传播算法
 特点：
   1. **单单使用网络结构进行社区的发现**，不需要预定义一些目标函数和先验知识
-  2. 线性的实践来进行社区发现  
+  2. 线性的时间来进行社区发现  
   
 发现过程：
   - 节点使用不同的社区标签进行初始化
@@ -40,7 +40,7 @@ ORDER BY Community, Name
 ~~~
 
 除了上面这种只使用基本的形式进行社区聚类，还可以通过制定部分节点的初始标签进行半监督学习，以及指定边的权重进行社区发现。
-~~~
+~~~mysql
 # 半监督学习
 CALL gds.labelPropagation.stream('myGraph', { seedProperty: 'seed_label' })
 YIELD nodeId, communityId AS Community
