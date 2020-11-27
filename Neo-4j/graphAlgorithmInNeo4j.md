@@ -16,6 +16,47 @@
 
 > 在LPA中可以手动为一些节点设置初始时的标签，因此可以是能够进行**半监督学习**的。
 
+#### Cyper调用
+1. 创建子图
+~~~mysql
+# 创建子图
+CALL gds.graph.create(
+    'myGraph',                                # 创建的子图名称
+    'User',                                   # 节点
+    'FOLLOW',                                 # 关系
+    {
+        nodeProperties: 'seed_label',          # 节点属性
+        relationshipProperties: 'weight'       # 关系属性
+    }
+)
+~~~
+
+2. 调用LPA进行结果社区聚类
+~~~ mysql
+CALL gds.labelPropagation.stream('myGraph')
+YIELD nodeId, communityId AS Community
+RETURN gds.util.asNode(nodeId).name AS Name, Community
+ORDER BY Community, Name
+~~~
+
+除了上面这种只使用基本的形式进行社区聚类，还可以通过制定部分节点的初始标签进行半监督学习，以及指定边的权重进行社区发现。
+~~~
+# 半监督学习
+CALL gds.labelPropagation.stream('myGraph', { seedProperty: 'seed_label' })
+YIELD nodeId, communityId AS Community
+RETURN gds.util.asNode(nodeId).name AS Name, Community
+ORDER BY Community, Name
+
+
+# 指定关系权重进行标签传播
+CALL gds.labelPropagation.stream('myGraph', { relationshipWeightProperty: 'weight' })
+YIELD nodeId, communityId AS Community
+RETURN gds.util.asNode(nodeId).name AS Name, Community
+ORDER BY Community, Name
+~~~
+
+
+
 
 
 
